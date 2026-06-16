@@ -5,7 +5,7 @@ import os
 from reka.client import Reka
 
 # 1. Setup Reka AI
-client = Reka(api_key="da44c60878f8cf6cb653f8bc8ad5184e86762d59dd6dfc71c771af6d819c8320")
+client = Reka(api_key="REKA_API_KEY")
 
 app = FastAPI()
 
