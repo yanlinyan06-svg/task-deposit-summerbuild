@@ -73,3 +73,50 @@ async def upload_task(file: UploadFile = File(...)):
     except Exception as e:
         print("Error:", str(e))
         return {"status": "error", "message": "Failed to connect to Reka AI."}
+
+from pypdf import PdfReader
+import json
+
+@app.post("/generate-tasks")
+async def generate_tasks(file: UploadFile = File(...)):
+    try:
+        # 1. Rip the text from the uploaded PDF
+        pdf_reader = PdfReader(file.file)
+        text = ""
+        
+        # We only read the first 5 pages to keep it fast and save AI tokens!
+        for page in pdf_reader.pages[:5]:
+            text += page.extract_text() + "\n"
+
+        # 2. The AI Tutor Prompt
+        prompt = f"""
+        You are an expert tutor. Read these lecture notes and generate exactly 3 short, specific questions to test the student's knowledge.
+        The questions should be something they can write down on a piece of paper.
+        
+        Respond ONLY with a valid JSON array of strings. 
+        Example: ["What is the powerhouse of the cell?", "Define osmosis.", "What is the Krebs Cycle?"]
+        
+        Lecture Notes:
+        {text}
+        """
+
+        print("Reading PDF and asking Reka...")
+        
+        # 3. Ask Reka AI
+        response = client.chat.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": [{"type": "text", "text": prompt}]
+                }
+            ],
+            model="reka-flash"
+        )
+        
+        # 4. Send the questions back to the phone
+        ai_reply = response.responses[0].message.content
+        return {"status": "success", "questions": ai_reply}
+
+    except Exception as e:
+        print("Error:", str(e))
+        return {"status": "error", "message": "Could not read the PDF or contact AI."}
