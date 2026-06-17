@@ -168,9 +168,7 @@ export default function HomeScreen() {
   };
 
   const submitPhotoAnswer = async () => {
-    if (!cameraRef.current) {
-      return;
-    }
+    if (!cameraRef.current) return;
 
     try {
       setIsSubmittingPhoto(true);
@@ -190,7 +188,20 @@ export default function HomeScreen() {
         body: formData,
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      
       const result = await response.json();
+
+      // 🛡️ THE NEW SAFETY SHIELD 🛡️
+      // If the Python server throws an error (like a bad API key), stop here!
+      if (result.status === "error") {
+          setAttemptStatus('rejected');
+          setFeedback("Server says: " + result.message);
+          setScreen('challenge');
+          setIsSubmittingPhoto(false);
+          return; 
+      }
+
+      // If we made it here, it's safe to parse the AI's JSON!
       const aiData = JSON.parse(cleanModelJson(result.message));
 
       if (aiData.valid === true) {
