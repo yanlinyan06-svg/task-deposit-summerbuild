@@ -5,7 +5,7 @@ import os
 from reka.client import Reka
 
 # 1. Setup Reka AI
-client = Reka(api_key="REKA_API_KEY")
+client = Reka(api_key=os.environ.get("REKA_API_KEY"))
 app = FastAPI()
 
 @app.get("/ping")
