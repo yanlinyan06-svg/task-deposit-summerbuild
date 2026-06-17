@@ -82,21 +82,26 @@ async def generate_tasks(file: UploadFile = File(...)):
     try:
         print(f"Receiving syllabus: {file.filename}")
         
-        # 1. Safely read the file into a memory buffer
         file_content = await file.read()
         pdf_stream = io.BytesIO(file_content)
         pdf_reader = PdfReader(pdf_stream)
         
         text = ""
-        for page in pdf_reader.pages[:5]:
+        # 1. Read only the FIRST page to keep it fast and avoid token limits
+        for page in pdf_reader.pages[:1]:
             extracted = page.extract_text()
             if extracted:
                 text += extracted + "\n"
                 
+        # 2. The Cheat Sheet Fix: Sanitize weird invisible characters 
+        text = text.replace('\x00', '') 
+        
+        # Cap the text at 5000 characters just to be safe
+        text = text[:5000]
+                
         if not text.strip():
             return {"status": "error", "message": "No readable text found. Is this a scanned image PDF?"}
 
-        # 2. Strict AI Prompting
         prompt = f"""
         You are an expert tutor. Read these lecture notes and generate exactly 3 short, specific questions to test the student's knowledge.
         
@@ -107,9 +112,13 @@ async def generate_tasks(file: UploadFile = File(...)):
         {text}
         """
 
-        # 3. Call Reka AI
+        print("Sending sanitized text to Reka...")
+        
+        # 3. Simplify the Reka payload format for text-only requests
         response = client.chat.create(
-            messages=[{"role": "user", "content": [{"type": "text", "text": prompt}]}],
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
             model="reka-flash"
         )
         
