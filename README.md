@@ -1,6 +1,6 @@
 # Task Deposit
 
-Task Deposit is a hackathon productivity app that turns distracting app opens into short study checkpoints. Students upload lecture notes or learning material, Reka AI generates a quick task, and the user must deposit a typed or handwritten attempt before the blocked app unlocks.
+Task Deposit is a productivity app that turns distracting app opens into short study checkpoints. Students upload lecture notes or learning material, Reka AI generates a quick task, and the user must deposit a typed or handwritten attempt before the blocked app unlocks.
 
 The current Expo Go build is a polished demo of the full flow:
 
