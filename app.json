@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "taskdeposit-app",
-    "slug": "taskdeposit-app",
+    "name": "Task Deposit",
+    "slug": "task-deposit-summerbuild",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tanirika.taskdepositapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +30,13 @@
     "plugins": [
       "expo-router",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Task Deposit to scan handwritten study attempts."
+        }
+      ],
+      "expo-document-picker",
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
@@ -42,8 +50,7 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
     },
     "extra": {
       "router": {},

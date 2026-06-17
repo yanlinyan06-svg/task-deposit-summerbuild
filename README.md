@@ -1,51 +1,57 @@
-# Welcome to your Expo app 👋
+# Task Deposit
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Task Deposit is a hackathon productivity app that turns distracting app opens into short study checkpoints. Students upload lecture notes or learning material, Reka AI generates a quick task, and the user must deposit a typed or handwritten attempt before the blocked app unlocks.
 
-## Get started
+The current Expo Go build is a polished demo of the full flow:
 
-1. Install dependencies
+- Upload learning material with Expo DocumentPicker.
+- Generate study prompts through the FastAPI + Reka backend.
+- Simulate opening blocked apps such as Instagram, TikTok, YouTube, and games.
+- Submit a typed attempt or snap a handwritten proof with Expo Camera.
+- Use Reka vision to reject blank, random, or spam images while allowing imperfect real attempts.
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- Expo SDK 54, React Native 0.81, Expo Router
+- Expo Camera and Expo DocumentPicker
+- FastAPI backend
+- Reka AI for prompt generation and proof validation
+- EAS-ready app configuration for iOS and Android builds
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run The App
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Open the project in Expo Go for the demo flow.
 
-## Learn more
+## Run The Backend
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+cd taskdeposit-backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+set REKA_API_KEY=your_reka_key
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+The app currently points at the deployed Render API:
 
-## Join the community
+```ts
+https://taskdeposit-summerbuild.onrender.com
+```
 
-Join our community of developers creating universal apps.
+Change `API_BASE_URL` in `app/(tabs)/index.tsx` if you want to test against a local backend.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-"# taskdeposit-app" 
+## Independent iOS And Android Builds
+
+Expo Go cannot directly control Apple Screen Time or Android app blocking APIs because those require native entitlements and platform-specific services. The project is structured so the demo can become an independent app through development builds:
+
+- iOS: add a native module using FamilyControls, DeviceActivity, and ManagedSettings.
+- Android: add a native module using UsageStats permission and an Accessibility service.
+- Expo: use EAS development/production builds instead of Expo Go once those native modules are added.
+
+The in-app blocked-app simulator is intentional for the hackathon presentation: it demonstrates the user experience while keeping the Expo Go build testable.
