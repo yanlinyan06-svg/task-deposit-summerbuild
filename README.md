@@ -34,7 +34,7 @@ cd taskdeposit-backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-set REKA_API_KEY=your_reka_key
+set REKA_API_KEY=da44c60878f8cf6cb653f8bc8ad5184e86762d59dd6dfc71c771af6d819c8320
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
